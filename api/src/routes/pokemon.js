@@ -3,24 +3,36 @@ const axios = require('axios');
 const { Pokemon, Type } = require('../db');
 const _LIMIT = 2;
 const router = Router();
+const UUIDcheck = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;  // validacion de UUID
+
 
 router.get('/', async (req, res) => {
     const { name } = req.query;
-    if (name) {
-        try {
-            const pokeResul = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
-            // const pokeResulDb = await Pokemon.find
-            res.status(200).send(pokeResul.data);
-        }
-        catch (error) {
-            res.status(404).send(`El pokemon ${name} no existe`);
+    if (name) { // si tiene name lo busca primero en la DB
+        const pokeResultDb = await Pokemon.findOne({
+            where: {
+                name
+            }
+        });
+
+        if (pokeResultDb) return res.status(200).send(pokeResultDb)
+        // si no lo encontró (null) lo busca en la api
+        else {
+            try {
+                console.log('entro axios');
+                const pokeResul = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
+                return res.status(200).send(getPropsFromPoke(pokeResul.data));
+            }
+            catch (error) {
+                res.status(404).send(`El pokemon ${name} no existe`);
+            }
         }
 
+        // no hay name, trae todos los poke  
     } else {
         const pokeResul = await getPokesFromApi();  // trae todo de la api max _LIMIT
         const pokeResulDb = await getPokesFromDb(); // trat todo de la DB
         res.send(pokeResul.concat(pokeResulDb));    // concatena las dos y devuelve
-
     }
 
 
@@ -43,28 +55,28 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
-    // const pokeResultDb = await Pokemon.findByPk(id);
-    // if (pokeResultDb) {
-    //     res.status(200).send(pokeResultDb);
-    // } else {
-    try {
-        const pokeResult = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
-        res.status(200).send(getPropsFromPoke(pokeResult.data));
+    if (UUIDcheck.test(id)) {
+        const pokeResultDb = await Pokemon.findByPk(id);
+        res.status(200).send(pokeResultDb);
+    } else {
+
+        try {
+            const pokeResult = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+            res.status(200).send(getPropsFromPoke(pokeResult.data));
+        }
+        catch (err) {
+            res.status(404).send(`No existe un pokemon con id ${id}`);
+        }
     }
-    catch (err) {
-        res.status(404).send(`No existe un pokemon con id ${id}`);
-    }
-    // }
 });
 
 
 
 router.post('/', async (req, res) => {
-    const { name, img, types, hp, attack, defense, speed, height, weight, createdInDb } = req.body;
-    console.log(name);
-    let pokeCreated = await Pokemon.create({
+    const {
         name,
         img,
+        types,
         hp,
         attack,
         defense,
@@ -72,19 +84,34 @@ router.post('/', async (req, res) => {
         height,
         weight,
         createdInDb
-    })
+    } = req.body;
 
-    let typesPoke = await Type.findAll({
+    let [pokeCreated, created] = await Pokemon.findOrCreate({
         where: {
-            name: types
+            name
+        },
+        defaults: {
+            img,
+            hp,
+            attack,
+            defense,
+            speed,
+            height,
+            weight,
+            createdInDb
         }
-    })
+    });
+    if (created) {
+        let typesPoke = await Type.findAll({
+            where: {
+                name: types
+            }
+        });
 
-    pokeCreated.addTypes(typesPoke);
-
-    res.send(`El Pokemon ${name} ha sido creado con éxito.`);
-
-
+        pokeCreated.addTypes(typesPoke);
+        res.send(`El Pokemon ${name} ha sido creado con éxito.`);
+    }
+    else res.status(404).send(`El pokemon ${name} ya existe`)
 })
 
 
@@ -94,7 +121,11 @@ router.post('/', async (req, res) => {
 async function getPokesFromDb() {
     return await Pokemon.findAll({
         include: {
-            model: Type
+            model: Type,
+            attributes: ['name'],
+            through: {
+                attributes: []
+            }
         }
     })
 
