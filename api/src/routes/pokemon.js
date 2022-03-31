@@ -47,19 +47,43 @@ router.get('/:id', async (req, res) => {
     // if (pokeResultDb) {
     //     res.status(200).send(pokeResultDb);
     // } else {
-        try {
-            const pokeResult = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
-            res.status(200).send(getPropsFromPoke(pokeResult.data));
-        }
-        catch (err) {
-            res.status(404).send(`No existe un pokemon con id ${id}`);
-        }
+    try {
+        const pokeResult = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        res.status(200).send(getPropsFromPoke(pokeResult.data));
+    }
+    catch (err) {
+        res.status(404).send(`No existe un pokemon con id ${id}`);
+    }
     // }
 });
 
 
 
 router.post('/', async (req, res) => {
+    const { name, img, types, hp, attack, defense, speed, height, weight, createdInDb } = req.body;
+    console.log(name);
+    let pokeCreated = await Pokemon.create({
+        name,
+        img,
+        hp,
+        attack,
+        defense,
+        speed,
+        height,
+        weight,
+        createdInDb
+    })
+
+    let typesPoke = await Type.findAll({
+        where: {
+            name: types
+        }
+    })
+
+    pokeCreated.addTypes(typesPoke);
+
+    res.send(`El Pokemon ${name} ha sido creado con éxito.`);
+
 
 })
 
