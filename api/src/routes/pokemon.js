@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const axios = require('axios');
 const { Pokemon, Type } = require('../db');
-const _LIMIT = 2;
+const _LIMIT = 25;
 const router = Router();
 const UUIDcheck = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;  // validacion de UUID
 
@@ -12,6 +12,13 @@ router.get('/', async (req, res) => {
         const pokeResultDb = await Pokemon.findOne({
             where: {
                 name
+            },
+            include: {
+                model: Type,
+                attributes: ['name'],
+                through: {
+                    attributes: []
+                }
             }
         });
 
@@ -19,7 +26,7 @@ router.get('/', async (req, res) => {
         // si no lo encontró (null) lo busca en la api
         else {
             try {
-                console.log('entro axios');
+                // console.log('entro axios');
                 const pokeResul = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
                 return res.status(200).send(getPropsFromPoke(pokeResul.data));
             }
@@ -56,7 +63,17 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     if (UUIDcheck.test(id)) {
-        const pokeResultDb = await Pokemon.findByPk(id);
+        const pokeResultDb = await Pokemon.findByPk(id,{
+
+            include: {
+                model: Type,
+                attributes: ['name'],
+                through: {
+                    attributes: []
+                }
+            }
+        }
+            );
         res.status(200).send(pokeResultDb);
     } else {
 
@@ -101,12 +118,14 @@ router.post('/', async (req, res) => {
             createdInDb
         }
     });
+    console.log(typeof types);
     if (created) {
         let typesPoke = await Type.findAll({
             where: {
                 name: types
             }
         });
+        
 
         pokeCreated.addTypes(typesPoke);
         res.send(`El Pokemon ${name} ha sido creado con éxito.`);
@@ -137,7 +156,7 @@ async function getPokesFromApi() {
 
     const pokes = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=' + _LIMIT);
     let pokeResul = await Promise.all(pokes.data.results.map(async el => {
-        const poke = await axios.get(el.url);
+        let poke = await axios.get(el.url);
         return getPropsFromPoke(poke.data);
     }));
     return pokeResul;
@@ -150,13 +169,18 @@ function getPropsFromPoke(poke) {
         id: poke.id,
         name: poke.name,
         img: poke.sprites.other['official-artwork'].front_default,
-        types: poke.types.map(el => el.type.name),
+        types: poke.types.map(el => {
+            return {
+                name: el.type.name
+            }
+        }),
         hp: getStat(poke.stats, 'hp'),
         attack: getStat(poke.stats, 'attack'),
         defense: getStat(poke.stats, 'defense'),
         speed: getStat(poke.stats, 'speed'),
         height: poke.height,
-        weight: poke.weight
+        weight: poke.weight,
+        createdInDb:false
     }
 
 }
