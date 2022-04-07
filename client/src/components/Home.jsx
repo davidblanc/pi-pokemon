@@ -75,12 +75,14 @@ export default function Home() {
                 {
                     pokePaginado?.map((poke) => {
                         return (
-                            <PokemonCard
-                                key={poke.id}
-                                name={poke.name}
-                                img={poke.img}
-                                types={poke.types}
-                            />
+                            <Link to={`/pokemons/${poke.id}`}>
+                              <PokemonCard
+                                  key={poke.id}
+                                  name={poke.name}
+                                  img={poke.img}
+                                  types={poke.types}
+                              />
+                            </Link>
                         )
                     })
                 }

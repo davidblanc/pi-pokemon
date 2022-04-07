@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const axios = require('axios');
 const { Pokemon, Type } = require('../db');
-const _LIMIT = 25;
+const _LIMIT = 14;
 const router = Router();
 const UUIDcheck = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;  // validacion de UUID
 
@@ -39,7 +39,7 @@ router.get('/', async (req, res) => {
     } else {
         const pokeResul = await getPokesFromApi();  // trae todo de la api max _LIMIT
         const pokeResulDb = await getPokesFromDb(); // trat todo de la DB
-        res.send(pokeResul.concat(pokeResulDb));    // concatena las dos y devuelve
+        res.status(200).send(pokeResul.concat(pokeResulDb));    // concatena las dos y devuelve
     }
 
 
@@ -118,7 +118,7 @@ router.post('/', async (req, res) => {
             createdInDb
         }
     });
-    console.log(typeof types);
+
     if (created) {
         let typesPoke = await Type.findAll({
             where: {

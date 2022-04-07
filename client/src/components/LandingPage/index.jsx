@@ -6,7 +6,7 @@ export default function LandingPage () {
     return (
         <div>
             <h1>Bienvenidos a PI Pokemon</h1>
-            <Link to='/home'>
+            <Link to='/pokemons'>
                 <button className='button'>Ingresar</button>
             </Link>
         </div>

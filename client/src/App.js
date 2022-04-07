@@ -10,8 +10,8 @@ function App() {
       <Router>
         <Switch>
           <Route exact path='/' component={LandingPage} />
-          <Route exact path='/home' component={Home} />
-          {/* <Route path='/:name' component={PokemonDetail} /> */}
+          <Route exact path='/pokemons' component={Home} />
+          <Route path='/pokemons/:id' component={PokemonDetail} />
         </Switch>
       </Router>
     </div>

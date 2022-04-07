@@ -1,9 +1,10 @@
-import { GET_POKEMONS, FILTER_BY_CREATED, ORDER_BY } from "../actions";
+import { GET_POKEMONS, FILTER_BY_CREATED, ORDER_BY, GET_POKEMON_BY_ID } from "../actions";
 
 
 const initialState = {
     pokemons: [],
-    pokemonsBackup: []
+    pokemonsBackup: [],
+    pokemonDetail: {}
 }
 
 
@@ -27,7 +28,7 @@ function pokeReducer(state = initialState, action) {
                 pokemons: action.payload === 'asc'
                     ? state.pokemonsBackup.sort((a, b) => {
                         if (a.name > b.name) return 1;
-                        if (b.name > a.name) return -1; 
+                        if (b.name > a.name) return -1;
                         return 0;
                     })
                     : state.pokemonsBackup.sort((a, b) => {
@@ -35,6 +36,11 @@ function pokeReducer(state = initialState, action) {
                         if (b.name > a.name) return 1;
                         return 0;
                     })
+            }
+        case GET_POKEMON_BY_ID:
+            return {
+                ...state,
+                pokemonDetail: action.payload
             }
         default:
             return state
