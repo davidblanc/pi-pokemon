@@ -19,6 +19,7 @@ export default function Home() {
     // estados locales
     const [page, setPage] = useState(1);
 
+    
     const [orderB, setOrderB] = useState('');
 
     const pokePaginado = pokemons.slice((page-1)*cantPerPag,page*cantPerPag);  
@@ -32,6 +33,7 @@ export default function Home() {
     const handleClick = (e) => {
         e.preventDefault();
         dispatch(getPokemons());
+
     }   
 
     const handleFilterCreated = (e) => {
@@ -75,12 +77,11 @@ export default function Home() {
                 {
                     pokePaginado?.map((poke) => {
                         return (
-                            <Link to={`/pokemons/${poke.id}`}>
+                            <Link key={poke.id} to={`/pokemons/${poke.id}`}>
                               <PokemonCard
-                                  key={poke.id}
-                                  name={poke.name}
-                                  img={poke.img}
-                                  types={poke.types}
+                                name={poke.name}
+                                img={poke.img}
+                                types={poke.types}
                               />
                             </Link>
                         )
