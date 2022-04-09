@@ -1,15 +1,17 @@
+import './styles.css';
 import React from 'react';
 import { useState, useEffect } from 'react';
+import {NavLink} from 'react-router-dom';
 
-export default function SearchBar() {
-    const [input, setInput] = useState();
+export default function SearchBar( {handleSearchPoke, setPokeName}) {
+
 
 
     return (
-        <div>
+        <form> 
             <label htmlFor="search">Ingresa el nombre de Pokemon</label>
-            <input onChange={e => setInput(e.target.value)} name="search" type="text" className="text" />
-            <button>Buscar</button>
-        </div>
+            <input onChange={e => setPokeName(e.target.value)} name="search" type="text" className="text" />
+            <button type='submit' onClick={e => handleSearchPoke(e)}>Buscar</button>
+        </form>
     )
 }

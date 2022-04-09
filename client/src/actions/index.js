@@ -6,7 +6,8 @@ export const GET_POKEMONS = 'GET_POKEMONS',
 	ORDER_BY = 'ORDER_BY',
 	GET_POKEMON_BY_ID = 'GET_POKEMON_BY_ID',
 	GET_TYPES = 'GET_TYPES',
-    POST_POKEMON='POST_POKEMON';
+    POST_POKEMON='POST_POKEMON',
+	GET_POKEMON_BY_NAME= 'GET_POKEMON_BY_NAME';
 
 export function getPokemons() {
 	return async function(dispatch) {
@@ -45,6 +46,15 @@ export function getPokemonById(payload) {
 		let pokes = await axios.get(_serverUrl + '/pokemons/' + payload);
 		return dispatch({
 			type: GET_POKEMON_BY_ID,
+			payload: pokes.data
+		});
+	};
+}
+export function getPokemonByName(payload) {
+	return async function(dispatch) {
+		let pokes = await axios.get(_serverUrl + '/pokemons?name=' + payload);
+		return dispatch({
+			type: GET_POKEMON_BY_NAME,
 			payload: pokes.data
 		});
 	};

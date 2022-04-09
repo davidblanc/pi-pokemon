@@ -2,59 +2,109 @@ import './styles.css';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPokemons,filterPokemonsByCreated, orderPokemons } from '../actions';
+import { getPokemons,filterPokemonsByCreated, orderPokemons, getPokemonByName } from '../actions';
 import { Link } from 'react-router-dom';
 //importo components
 import PokemonCard from './PokemonCard';
 import SearchBar from './SearchBar';
 import Paginas from './Paginas'
+import FilterControls from './FilterControls';
 
 const cantPerPag = 12;
 
 
 export default function Home() {
+
+    const [order,setOrder] = useState('')
+    const [by,setBy] = useState('')
+    const [filterType,setFilterType] = useState('') 
+    const [exist,setExist] = useState('')
+   
+    const [pokeName,setPokeName] = useState('');
     // Redux
     const dispatch = useDispatch();
-    const pokemons = useSelector(state => state.pokemons);
+    const pokemons = useSelector(state => state.pokemons.filter((poke) => 
+    {
+        console.log(filterType);
+        return (
+            exist === '' ? true : poke.createdInDb.toString() === exist 
+                || filterType === ''? true: (poke.type1.toString() === filterType) || (poke.type2.toString() === filterType)
+                )
+        }
+    ));
     // estados locales
-    const [page, setPage] = useState(1);
-
     
-    const [orderB, setOrderB] = useState('');
-
+    const [page, setPage] = useState(1);
     const pokePaginado = pokemons.slice((page-1)*cantPerPag,page*cantPerPag);  
     
 
     useEffect(() => {
-        dispatch(getPokemons());
-        
+        dispatch(getPokemons());  
     }, [dispatch]);
-
-    const handleClick = (e) => {
+    
+    const handleClickRefresh = (e) => {
         e.preventDefault();
         dispatch(getPokemons());
-
-    }   
-
-    const handleFilterCreated = (e) => {
+    }
+    
+    const handleSearchPoke = (e) => {
         e.preventDefault();
-        setPage(1);  
-        dispatch(filterPokemonsByCreated(e.target.value));
+        dispatch(getPokemonByName(pokeName))
+    }    
+
+    const handleClickFilter = (e) => {
+        e.preventDefault();
+        console.log (e.target.value);
+       
     }
 
-    const orderBy = (e) => {
-        e.preventDefault();
-        dispatch(orderPokemons(e.target.value));
-        setPage(1);
-        setOrderB('Order by ' + e.target.value);
 
-    }
+    // const handleFilterCreated = (e) => {
+    //     e.preventDefault();
+    //     setPage(1);  
+    //     dispatch(filterPokemonsByCreated(e.target.value));
+    // }
 
+    // const orderBy = (e) => {
+    //     e.preventDefault();
+    //     dispatch(orderPokemons(e.target.value));
+        
+        // setOrderB('Order by ' + e.target.value);
+
+    // }
+    
     return (
         <div>
-            <SearchBar/>
-            <button onClick={handleClick} >Recargar</button>
-                <div className="pokeSelects">
+            <SearchBar handleSearchPoke={handleSearchPoke} setPokeName={setPokeName}/>
+            <FilterControls handleClick={handleClickRefresh}
+                            setOrder = {setOrder}
+                            setBy = {setBy}
+                            setFilterType = {setFilterType}
+                            setExist = {setExist}
+            />
+                <Paginas cantPerPag={cantPerPag} cant={pokemons.length} setPagina={setPage} paginaActual={page}/>
+                <div  className="pokemonList">
+                {
+                    pokePaginado?.map((poke) => {
+                        return (
+                            <Link key={poke.id} to={`/pokemons/${poke.id}`}>
+                                <PokemonCard
+                                name={poke.name}
+                                img={poke.img}
+                                types={poke.types}
+                                />
+                            </Link>
+                        )
+                    })
+                }
+            </div>
+        </div>
+
+    )
+}
+
+
+        /* <div className="pokeSelects">
                     <select onChange={handleFilterCreated} name="" id="">
                         <option value="all">Creados y Existentes</option>
                         <option value="false">Existente</option>
@@ -71,24 +121,5 @@ export default function Home() {
                         <option value="name">Orden por Nombre</option>
                         <option value="attack">Orden por Fuerza</option>
                     </select>
-                </div>
-                <Paginas cantPerPag={cantPerPag} cant={pokemons.length} setPagina={setPage} paginaActual={page}/>
-                <div  className="pokemonList">
-                {
-                    pokePaginado?.map((poke) => {
-                        return (
-                            <Link key={poke.id} to={`/pokemons/${poke.id}`}>
-                              <PokemonCard
-                                name={poke.name}
-                                img={poke.img}
-                                types={poke.types}
-                              />
-                            </Link>
-                        )
-                    })
-                }
-            </div>
-        </div>
-
-    )
-}
+            <button onClick={handleClick} >Recargar</button>
+                </div> */

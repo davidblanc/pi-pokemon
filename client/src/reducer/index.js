@@ -1,4 +1,12 @@
-import { GET_POKEMONS, FILTER_BY_CREATED, ORDER_BY, GET_POKEMON_BY_ID, GET_TYPES, POST_POKEMON } from '../actions';
+import {
+	GET_POKEMONS,
+	FILTER_BY_CREATED,
+	ORDER_BY,
+	GET_POKEMON_BY_ID,
+	GET_TYPES,
+	POST_POKEMON,
+	GET_POKEMON_BY_NAME
+} from '../actions';
 
 const initialState = {
 	pokemons: [],
@@ -44,7 +52,11 @@ function pokeReducer(state = initialState, action) {
 				...state,
 				pokemonDetail: action.payload
 			};
-
+		case GET_POKEMON_BY_NAME:
+			return {
+				...state,
+				pokemons: [action.payload]
+			};
 		case GET_TYPES:
 			return {
 				...state,
@@ -52,8 +64,8 @@ function pokeReducer(state = initialState, action) {
 			};
 		case POST_POKEMON:
 			return {
-                ...state
-            };
+				...state
+			};
 		default:
 			return state;
 	}

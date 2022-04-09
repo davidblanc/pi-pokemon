@@ -24,8 +24,9 @@ export default function PokemonForm() {
 	});
 	const varsToStas = Object.entries(inputs).filter((e) => e[0] !== 'img' && e[0] !== 'name' && e[0] !== 'type1' && e[0] !== 'type2');
 
-	useEffect(() => {
-		dispatch(getTypes());
+	// se valida para que funcione la ruta si se accecede sin pasasr por home al menos una vez
+	useEffect(() => {    
+		!types.length && dispatch(getTypes());
 	}, []);
 
 	useEffect(() => {});

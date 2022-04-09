@@ -4,17 +4,19 @@ import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 import PokemonDetail from './components/PokemonDetail';
 import PokemonForm from './components/PokemonForm';
+import NavBar from './components/NavBar'
 
 function App() {
   return (
     <div className="App">
       <Router>
-        <Switch>
+        {/* <Switch> */}
           <Route exact path='/' component={LandingPage} />
+          <NavBar/>
           <Route exact path='/pokemons' component={Home} />
-          <Route path='/pokemons/create' component={PokemonForm}/>
+          <Route exact path='/create' component={PokemonForm}/>
           <Route path='/pokemons/:id' component={PokemonDetail} />
-        </Switch>
+        {/* </Switch> */}
       </Router>
     </div>
   );
