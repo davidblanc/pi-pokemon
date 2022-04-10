@@ -1,9 +1,9 @@
 import './styles.css';
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPokemonById } from '../actions';
-import { Link, NavLink, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 export default function PokemonDetail() {
     const poke = useSelector(state => state.pokemonDetail);

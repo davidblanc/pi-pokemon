@@ -1,16 +1,15 @@
 import './styles.css';
 import React from 'react';
-import { useState, useEffect } from 'react';
+import {  useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTypes } from '../actions';
-import { Link } from 'react-router-dom';
 
 export default function FilterControls({ handleClick, setOrder, setBy, setFilterType, setExist }) {
 	const types = useSelector((state) => state.types);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dispatch(getTypes());
+		!types.length && dispatch(getTypes());
 	},[]);
 
 	return (
@@ -20,7 +19,7 @@ export default function FilterControls({ handleClick, setOrder, setBy, setFilter
 				<option value="false">Existente</option>
 				<option value="true">Creado</option>
 			</select>
-			<select onChange={e => setFilterType(e.target.value)} name="types" id="" onChange0>
+			<select onChange={e => setFilterType(e.target.value)} name="types" id="">
 				<option value="">Tipos de Pokemon</option>
 				{types.map((type, i) => {
 					return (
@@ -30,14 +29,12 @@ export default function FilterControls({ handleClick, setOrder, setBy, setFilter
 					);
 				})}
 			</select>
-			<select onChange={setOrder} name="orderAscDesc" id="">
+			<select onChange={e => setOrder(e.target.value)} name="orderAscDesc" id="">
 				<option value="">Elegir Orden</option>
 				<option value="asc">Orden Ascendente</option>
 				<option value="desc">Orden Descendente</option>
 			</select>
-			<select name="" id="byNameAttack">
-
-				<option value="">Ordenar según...</option>
+			<select onChange={e => setBy(e.target.value)} name="" id="byNameAttack">
 				<option value="name">Orden por Nombre</option>
 				<option value="attack">Orden por Fuerza</option>
 			</select>

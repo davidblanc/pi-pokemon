@@ -3,7 +3,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTypes, postPokemon } from '../actions';
-import { Link, NavLink, useParams } from 'react-router-dom';
+
 
 export default function PokemonForm() {
 	const types = useSelector((state) => state.types);
@@ -50,11 +50,11 @@ export default function PokemonForm() {
 		switch (name) {
 			case 'name':
 				return value.length > 10 || value.length < 3 
-                ? 'El Nombre debe contener entre 4 y 10 caracteres' 
+                ? error? error + ' y el Nombre debe contener entre 4 y 10 caracteres': 'El Nombre debe contener entre 4 y 10 caracteres'
                 : '';
             case 'type2':
                 return value === inputs.type1
-                ? 'No puedes elegir dos tipos iguales'
+                ? error? error + ' y no puedes elegir dos tipos iguales': 'No puedes elegir dos tipos iguales'
                 : ''
 			default:
 				return 'Rellene los datos por favor';
@@ -69,7 +69,7 @@ export default function PokemonForm() {
 				name: inputs.name.toLowerCase(),
 				types: [ inputs.type1, inputs.type2 ]
 			})
-		);
+		);	
 	};
 
 	return (
@@ -88,7 +88,7 @@ export default function PokemonForm() {
 			{/* stats */}
 			{varsToStas.map(([ name, value ], i) => {
 				return (
-					<label htmlFor={name}>
+					<label key={i} htmlFor={name}>
 						{name}
 						<input
 							type="range"

@@ -27,19 +27,6 @@ export function getTypes() {
 		});
 	};
 }
-export function orderPokemons(payload) {
-	return {
-		type: ORDER_BY,
-		payload
-	};
-}
-
-export function filterPokemonsByCreated(payload) {
-	return {
-		type: FILTER_BY_CREATED,
-		payload
-	};
-}
 
 export function getPokemonById(payload) {
 	return async function(dispatch) {
@@ -52,16 +39,22 @@ export function getPokemonById(payload) {
 }
 export function getPokemonByName(payload) {
 	return async function(dispatch) {
-		let pokes = await axios.get(_serverUrl + '/pokemons?name=' + payload);
-		return dispatch({
-			type: GET_POKEMON_BY_NAME,
-			payload: pokes.data
-		});
+		try{
+			
+			let pokes = await axios.get(_serverUrl + '/pokemons?name=' + payload.toLowerCase());
+			return dispatch({
+				type: GET_POKEMON_BY_NAME,
+				payload: pokes.data
+			});
+		}
+		catch (err){
+			alert(`No existe un pokemon de nombre ${payload}`);
+		}
 	};
 }
 
 export function postPokemon(payload) {
-    return async function(dispatch) {
+	return async function(dispatch) {
 		try {
 			let poke = await axios.post(_serverUrl + '/pokemons/', payload);
 			console.log(poke.data)
@@ -75,3 +68,16 @@ export function postPokemon(payload) {
 		}
     }
 }
+// export function orderPokemons(payload) {
+// 	return {
+// 		type: ORDER_BY,
+// 		payload
+// 	};
+// }
+
+// export function filterPokemonsByCreated(payload) {
+// 	return {
+// 		type: FILTER_BY_CREATED,
+// 		payload
+// 	};
+// }

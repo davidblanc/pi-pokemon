@@ -2,7 +2,7 @@ import './styles.css';
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPokemons,filterPokemonsByCreated, orderPokemons, getPokemonByName } from '../actions';
+import { getPokemons, getPokemonByName } from '../actions';
 import { Link } from 'react-router-dom';
 //importo components
 import PokemonCard from './PokemonCard';
@@ -10,28 +10,26 @@ import SearchBar from './SearchBar';
 import Paginas from './Paginas'
 import FilterControls from './FilterControls';
 
-const cantPerPag = 12;
+const cantPerPag = 4; // 12
 
 
 export default function Home() {
-
+    // control de filtros y orden
     const [order,setOrder] = useState('')
-    const [by,setBy] = useState('')
+    const [by,setBy] = useState('name')
     const [filterType,setFilterType] = useState('') 
     const [exist,setExist] = useState('')
-   
+
     const [pokeName,setPokeName] = useState('');
     // Redux
     const dispatch = useDispatch();
-    const pokemons = useSelector(state => state.pokemons.filter((poke) => 
-    {
-        console.log(filterType);
-        return (
-            exist === '' ? true : poke.createdInDb.toString() === exist 
-                || filterType === ''? true: (poke.type1.toString() === filterType) || (poke.type2.toString() === filterType)
-                )
-        }
-    ));
+    const pokemons = useSelector(state => state.pokemons
+        .filter( (poke) => 
+            exist === '' ? true : poke.createdInDb.toString() === exist        
+            ))
+        .filter( (poke) => filterType === '' ? true: poke.types.reduce((acc,type) => acc || type.name === filterType,false))
+        .sort((pokeA,pokeB) => orderPokemons(pokeA,pokeB,order,by));
+
     // estados locales
     
     const [page, setPage] = useState(1);
@@ -52,26 +50,8 @@ export default function Home() {
         dispatch(getPokemonByName(pokeName))
     }    
 
-    const handleClickFilter = (e) => {
-        e.preventDefault();
-        console.log (e.target.value);
-       
-    }
 
-
-    // const handleFilterCreated = (e) => {
-    //     e.preventDefault();
-    //     setPage(1);  
-    //     dispatch(filterPokemonsByCreated(e.target.value));
-    // }
-
-    // const orderBy = (e) => {
-    //     e.preventDefault();
-    //     dispatch(orderPokemons(e.target.value));
-        
-        // setOrderB('Order by ' + e.target.value);
-
-    // }
+  
     
     return (
         <div>
@@ -103,6 +83,50 @@ export default function Home() {
     )
 }
 
+const orderPokemons = (pokeA,pokeB,order,by) => { 
+    if (order) {
+        if (by === 'name') {
+            if (order === 'asc')  {
+                if (pokeA.name > pokeB.name) return 1;
+                if (pokeB.name > pokeA.name) return -1;
+                return 0;
+            }
+            else {
+                if (pokeA.name > pokeB.name) return -1;
+                if (pokeB.name > pokeA.name) return 1;
+                return 0;
+            }
+        } 
+        else if (by === 'attack') {
+            if (order === 'asc')  {
+                if (pokeA.attack > pokeB.attack) return 1;
+                if (pokeB.attack > pokeA.attack) return -1;
+                return 0;
+            }
+            else {
+                if (pokeA.attack > pokeB.attack) return -1;
+                if (pokeB.attack > pokeA.attack) return 1;
+                return 0;
+            }
+        }
+        return 0;
+        
+    }
+}
+
+  // const handleFilterCreated = (e) => {
+    //     e.preventDefault();
+    //     setPage(1);  
+    //     dispatch(filterPokemonsByCreated(e.target.value));
+    // }
+
+    // const orderBy = (e) => {
+    //     e.preventDefault();
+    //     dispatch(orderPokemons(e.target.value));
+        
+        // setOrderB('Order by ' + e.target.value);
+
+    // }
 
         /* <div className="pokeSelects">
                     <select onChange={handleFilterCreated} name="" id="">

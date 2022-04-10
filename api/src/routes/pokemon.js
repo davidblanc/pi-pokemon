@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const axios = require('axios');
 const { Pokemon, Type } = require('../db');
-const _LIMIT = 14;
+const _LIMIT = 10;
 const router = Router();
 const UUIDcheck = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i; // validacion de UUID
 
@@ -37,6 +37,7 @@ router.get('/', async (req, res) => {
 		// no hay name, trae todos los poke
 	} else {
 		const pokeResul = await getPokesFromApi(); // trae todo de la api max _LIMIT
+		console.log('SALIO DE LA API')
 		const pokeResulDb = await getPokesFromDb(); // trat todo de la DB
 		res.status(200).send(pokeResul.concat(pokeResulDb)); // concatena las dos y devuelve
 	}
@@ -77,16 +78,16 @@ router.get('/:id', async (req, res) => {
 		} catch (err) {
 			if (err.response.status === 404) {
 				return res.status(err.response.status).send(`No existe un pokemon con id ${id}`);
-			}else {
-                return res.status(err.response.status).send(`Error`);
-            }
+			} else {
+				return res.status(err.response.status).send(`Error`);
+			}
 		}
 	}
 });
 
 router.post('/', async (req, res) => {
 	const { name, img, types, hp, attack, defense, speed, height, weight, createdInDb } = req.body;
-
+	
 	try {
 		let pokeAPI = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
 		return res.status(404).send(`El pokemon ${name} ya existe`);
@@ -137,14 +138,26 @@ async function getPokesFromDb() {
 // trae todos los pokes limitado a _LIMIT de la api
 
 async function getPokesFromApi() {
-	const pokes = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=' + _LIMIT);
-	let pokeResul = await Promise.all(
-		pokes.data.results.map(async (el) => {
-			let poke = await axios.get(el.url);
-			return getPropsFromPoke(poke.data);
-		})
-	);
-	return pokeResul;
+	try {
+		const pokes = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=' + _LIMIT);
+		let pokeResul = await Promise.all(
+			pokes.data.results.map(async (el, i) => {
+				try{
+					let poke = await axios.get(el.url);
+					p = getPropsFromPoke(poke.data);
+					console.log(i,p);
+					return p
+				}catch (err) {
+					return {}
+				}
+				// return getPropsFromPoke(poke.data);
+			})
+		);
+		
+		return pokeResul;
+	} catch (err) {
+		console.log(err);
+	}
 }
 
 //trae props pedidas del pokemon
