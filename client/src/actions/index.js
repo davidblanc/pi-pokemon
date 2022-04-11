@@ -6,16 +6,22 @@ export const GET_POKEMONS = 'GET_POKEMONS',
 	ORDER_BY = 'ORDER_BY',
 	GET_POKEMON_BY_ID = 'GET_POKEMON_BY_ID',
 	GET_TYPES = 'GET_TYPES',
-    POST_POKEMON='POST_POKEMON',
-	GET_POKEMON_BY_NAME= 'GET_POKEMON_BY_NAME';
+	POST_POKEMON = 'POST_POKEMON',
+	GET_POKEMON_BY_NAME = 'GET_POKEMON_BY_NAME';
 
 export function getPokemons() {
+	console.log('Entro a getPokemons function');
 	return async function(dispatch) {
-		let pokes = await axios.get(_serverUrl + '/pokemons');
-		return dispatch({
-			type: GET_POKEMONS,
-			payload: pokes.data
-		});
+		try {
+			let pokes = await axios.get(_serverUrl + '/pokemons');
+			return dispatch({
+				type: GET_POKEMONS,
+				payload: pokes.data
+			});
+		} catch (e) {
+			console.log(e.toJSON());
+			alert('No se pudo traer la lista de pokemones');
+		}
 	};
 }
 export function getTypes() {
@@ -39,15 +45,13 @@ export function getPokemonById(payload) {
 }
 export function getPokemonByName(payload) {
 	return async function(dispatch) {
-		try{
-			
+		try {
 			let pokes = await axios.get(_serverUrl + '/pokemons?name=' + payload.toLowerCase());
 			return dispatch({
 				type: GET_POKEMON_BY_NAME,
 				payload: pokes.data
 			});
-		}
-		catch (err){
+		} catch (err) {
 			alert(`No existe un pokemon de nombre ${payload}`);
 		}
 	};
@@ -57,16 +61,15 @@ export function postPokemon(payload) {
 	return async function(dispatch) {
 		try {
 			let poke = await axios.post(_serverUrl + '/pokemons/', payload);
-			console.log(poke.data)
+			alert(`El pokemon ${payload.name} fue creado correctamente`);
 			return dispatch({
 				type: POST_POKEMON,
 				payload: poke.data
-			})
+			});
+		} catch (error) {
+			alert(`El pokemon ${payload.name} ya existe`);
 		}
-		catch (error) {
-			alert(`El pokemon ${payload.name} ya existe`)
-		}
-    }
+	};
 }
 // export function orderPokemons(payload) {
 // 	return {

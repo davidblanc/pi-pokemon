@@ -4,15 +4,20 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTypes, postPokemon } from '../actions';
 
+//regex
+const imgUrlCheck = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/;
+const numCheck = /^\d+$/;
+const nameCheck = /^([a-zA-Z]+)(\s[a-zA-Z]+)*$/;
+
 
 export default function PokemonForm() {
 	const types = useSelector((state) => state.types);
 	const dispatch = useDispatch();
 
-	const [ error, setError ] = useState('Rellene los datos por favor');
+	const [ error, setError ] = useState({});
 	const [ inputs, setInputs ] = useState({
 		name: '',
-        img:'',
+		img: '',
 		hp: 0,
 		attack: 0,
 		defense: 0,
@@ -22,44 +27,42 @@ export default function PokemonForm() {
 		type1: 'normal',
 		type2: ''
 	});
-	const varsToStas = Object.entries(inputs).filter((e) => e[0] !== 'img' && e[0] !== 'name' && e[0] !== 'type1' && e[0] !== 'type2');
+	const varsToStas = Object.entries(inputs).filter(
+		(e) => e[0] !== 'img' && e[0] !== 'name' && e[0] !== 'type1' && e[0] !== 'type2'
+	);
 
 	// se valida para que funcione la ruta si se accecede sin pasasr por home al menos una vez
-	useEffect(() => {    
+	useEffect(() => {
 		!types.length && dispatch(getTypes());
 	}, []);
 
-	useEffect(() => {});
+	useEffect(() => {
+		setError({
+			...error,
+			name:
+				inputs.name.length > 10 || inputs.name.length < 3 || !nameCheck.test(inputs.name)
+					? 'Ingrese nombre válido(10>name>3)'
+					: '',
+			types: inputs.type1 === inputs.type2 ? 'No puedes elegir dos tipos iguales' : '',
+			img: imgUrlCheck.test(inputs.img)? '' :'Ingrese una enlace correcto.' 
+		})
+	},[inputs]);
+
 	// onChanges
 	const onChanges = (e) => {
 		e.preventDefault();
 
-		setError(validationError(e));
+		// validationError(e);
 
 		setInputs({
 			...inputs,
 			[e.target.name]: e.target.value
 		});
+
+	
 	};
 
-	// Validacion de errores
-	const validationError = (e) => {
-		let name = e.target.name;
-		let value = e.target.value;
-
-		switch (name) {
-			case 'name':
-				return value.length > 10 || value.length < 3 
-                ? error? error + ' y el Nombre debe contener entre 4 y 10 caracteres': 'El Nombre debe contener entre 4 y 10 caracteres'
-                : '';
-            case 'type2':
-                return value === inputs.type1
-                ? error? error + ' y no puedes elegir dos tipos iguales': 'No puedes elegir dos tipos iguales'
-                : ''
-			default:
-				return 'Rellene los datos por favor';
-		}
-	};
+	
 
 	const handlerOnSubmit = (e) => {
 		e.preventDefault();
@@ -69,22 +72,52 @@ export default function PokemonForm() {
 				name: inputs.name.toLowerCase(),
 				types: [ inputs.type1, inputs.type2 ]
 			})
-		);	
+		);
+		//reset form
+		setInputs({
+			name: '',
+			img: '',
+			hp: 0,
+			attack: 0,
+			defense: 0,
+			speed: 0,
+			height: 0,
+			weight: 0,
+			type1: 'normal',
+			type2: ''
+		})
 	};
 
 	return (
-		<form className="formPoke">
+		<form className="formPoke" onSubmit={(e) => handlerOnSubmit(e)}>
 			<h1>Crear Pokemon Nuevo</h1>
-			{!error ? null : <span>{error}</span>}
-			<input
-				className={error && 'danger'}
-				name="name"
-				value={inputs.name}
-				placeholder="Nombre del pokemon"
-				onChange={(e) => onChanges(e)}
-			/>
 
-			<input onChange={onChanges} className={error && 'danger'} type="url" name="img" value={inputs.img} placeholder="Ingrese URL de la imagen..." />
+				<div className="nameForm">
+					<input
+						// className={error && 'danger'}
+						name="name"
+						value={inputs.name}
+						placeholder="Nombre del pokemon"
+						onChange={(e) => onChanges(e)}
+						required
+					/>
+					{!error.name ? null : <span>{error.name}</span>}
+				</div>
+
+
+
+				<div className="imgForm">
+					<input
+						// className={error && 'danger'}
+						onChange={onChanges}
+						type="url"
+						name="img"
+						value={inputs.img}
+						placeholder="Ingrese URL de la imagen..."
+					/>
+					{!error.img ? null : <span>{error.img}</span>}
+				</div>
+
 			{/* stats */}
 			{varsToStas.map(([ name, value ], i) => {
 				return (
@@ -103,25 +136,32 @@ export default function PokemonForm() {
 				);
 			})}
 			{/* types */}
-			<select onChange={(e) => onChanges(e)} name="type1" id="">
-				{types.map((type, i) => {
-					return (
-						<option key={i} name="type1" id="" value={type.name}>
-							{type.name}
-						</option>
-					);
-				})}
-			</select>
-			<select onChange={(e) => onChanges(e)} name="type2" id="">
-				<option value="">agregar un tipo </option>
-				{types.map((type, i) => {
-					return (
-						<option key={i} name="type2" id="" value={type.name}>
-							{type.name}
-						</option>
-					);
-				})}
-			</select>
+
+				<div className="typesForm">
+					<div>
+						<select onChange={(e) => onChanges(e)} name="type1" id="">
+							{types.map((type, i) => {
+								return (
+									<option key={i} name="type1" id="" value={type.name}>
+										{type.name}
+									</option>
+								);
+							})}
+						</select>
+						<select onChange={(e) => onChanges(e)} name="type2" id="">
+							<option value="">agregar un tipo </option>
+							{types.map((type, i) => {
+								return (
+									<option key={i} name="type2" id="" value={type.name}>
+										{type.name}
+									</option>
+								);
+							})}
+						</select>
+					</div>
+					<div>{!error.types ? null : <span>{error.types}</span>}</div>
+				</div>
+		
 
 			{/* <label htmlFor="hp">
 				Vida: {inputs.hp}
@@ -190,7 +230,10 @@ export default function PokemonForm() {
 				/>
 			</label> */}
 
-			<input disabled={error ? true : undefined} onClick={(e) => handlerOnSubmit(e)} type="submit" />
+			<input
+				disabled={error.name || error.types || error.img ? true : undefined}
+				type="submit"
+			/>
 		</form>
 	);
 }

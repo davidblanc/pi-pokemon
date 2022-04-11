@@ -49,9 +49,6 @@ export default function Home() {
         e.preventDefault();
         dispatch(getPokemonByName(pokeName))
     }    
-
-
-  
     
     return (
         <div>

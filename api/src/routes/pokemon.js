@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const axios = require('axios');
 const { Pokemon, Type } = require('../db');
-const _LIMIT = 10;
+const _LIMIT = 20;
 const router = Router();
 const UUIDcheck = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i; // validacion de UUID
 
@@ -36,10 +36,13 @@ router.get('/', async (req, res) => {
 
 		// no hay name, trae todos los poke
 	} else {
-		const pokeResul = await getPokesFromApi(); // trae todo de la api max _LIMIT
-		console.log('SALIO DE LA API')
-		const pokeResulDb = await getPokesFromDb(); // trat todo de la DB
-		res.status(200).send(pokeResul.concat(pokeResulDb)); // concatena las dos y devuelve
+		try {
+			const pokeResul = await getPokesFromApi(); // trae todo de la api max _LIMIT
+			const pokeResulDb = await getPokesFromDb(); // trat todo de la DB
+			res.status(200).send(pokeResul.concat(pokeResulDb)); // concatena las dos y devuelve
+		} catch (err) {
+			res.status(404).send('No se pudo traer la lista de pokemons')
+		}
 	}
 
 	// axios.get('https://pokeapi.co/api/v2/pokemon?limit=' + _LIMIT).
@@ -87,7 +90,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
 	const { name, img, types, hp, attack, defense, speed, height, weight, createdInDb } = req.body;
-	
+
 	try {
 		let pokeAPI = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
 		return res.status(404).send(`El pokemon ${name} ya existe`);
@@ -142,21 +145,26 @@ async function getPokesFromApi() {
 		const pokes = await axios.get('https://pokeapi.co/api/v2/pokemon?limit=' + _LIMIT);
 		let pokeResul = await Promise.all(
 			pokes.data.results.map(async (el, i) => {
-				try{
-					let poke = await axios.get(el.url);
+				try {
+					let poke = await axios({
+						url: el.url,
+						method: 'get',
+						timeout: 5000
+					});
 					p = getPropsFromPoke(poke.data);
-					console.log(i,p);
-					return p
-				}catch (err) {
-					return {}
+					console.log(i, p.name);
+					return p;
+				} catch (err) {
+					throw new Error('Alguno de los pokemones no se pudo traer o tarde demasiado tiempo');
 				}
 				// return getPropsFromPoke(poke.data);
 			})
 		);
-		
+
 		return pokeResul;
 	} catch (err) {
-		console.log(err);
+		console.error(err);
+		throw new Error(err);
 	}
 }
 
