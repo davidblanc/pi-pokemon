@@ -6,19 +6,23 @@ const { Pokemon, conn } = require('../../src/db.js');
 
 const agent = session(app);
 const pokemon = {
-  name: 'Pikachu',
+	name: 'Pikachu'
 };
 
-describe('Pokemon routes', () => {
-  before(() => conn.authenticate()
-  .catch((err) => {
-    console.error('Unable to connect to the database:', err);
-  }));
-  beforeEach(() => Pokemon.sync({ force: true })
-    .then(() => Pokemon.create(pokemon)));
-  describe('GET /pokemons', () => {
-    it('should get 200', () =>
-      agent.get('/pokemons').expect(200)
-    );
-  });
+describe('Pokemon routes', function ()  {
+  this.timeout (10 *1000)
+	before(() =>
+		conn.authenticate().catch((err) => {
+			console.error('Unable to connect to the database:', err);
+		})
+	);
+	beforeEach(() => Pokemon.sync({ force: true }).then(() => Pokemon.create(pokemon)));
+	describe('GET /pokemons', () => {
+		it('should get 200', () => agent.get('/pokemons').expect(200));
+    it('should get 404', () => agent.get('/pokemons/2').expect(200));
+    it('should get 200', () => agent.get('/pokemons/3').expect(200));
+	});
+	// describe('GET /pokemons/pokemonNoExiste deberia devolver error', () => {
+	// 	it('should get 404', () => agent.get('/pokemons/pokemonNoExiste').expect(404));
+	// });
 });

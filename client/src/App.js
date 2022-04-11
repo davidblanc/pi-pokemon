@@ -4,7 +4,7 @@ import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 import PokemonDetail from './components/PokemonDetail';
 import PokemonForm from './components/PokemonForm';
-import NavBar from './components/NavBar'
+// import NavBar from './components/NavBar'
 
 function App() {
   return (

@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const axios = require('axios');
 const { Pokemon, Type } = require('../db');
-const _LIMIT = 6;
+const _LIMIT = 10;
 const router = Router();
 const UUIDcheck = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i; // validacion de UUID
 
@@ -152,7 +152,7 @@ async function getPokesFromApi() {
 						timeout: 5000
 					});
 					p = getPropsFromPoke(poke.data);
-					console.log(i, p.name);
+					// console.log(i, p.name);
 					return p;
 				} catch (err) {
 					throw new Error('Alguno de los pokemones no se pudo traer o tarde demasiado tiempo');
