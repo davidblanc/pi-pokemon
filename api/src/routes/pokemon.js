@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const axios = require('axios');
 const { Pokemon, Type } = require('../db');
-const _LIMIT = 20;
+const _LIMIT = 6;
 const router = Router();
 const UUIDcheck = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i; // validacion de UUID
 
@@ -93,7 +93,7 @@ router.post('/', async (req, res) => {
 
 	try {
 		let pokeAPI = await axios.get(`https://pokeapi.co/api/v2/pokemon/${name}`);
-		return res.status(404).send(`El pokemon ${name} ya existe`);
+		return res.status(400).send(`El pokemon ${name} ya existe`);
 	} catch (e) {
 		let [ pokeCreated, created ] = await Pokemon.findOrCreate({
 			where: {

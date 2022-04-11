@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';  // v6 se cambiar Switch por Routes
+import { BrowserRouter as Router, Route ,Switch} from 'react-router-dom';  // v6 se cambiar Switch por Routes
 import LandingPage from './components/LandingPage';
 import Home from './components/Home';
 import PokemonDetail from './components/PokemonDetail';
@@ -10,13 +10,12 @@ function App() {
   return (
     <div className="App">
       <Router>
-        {/* <Switch> */}
+        <Switch>
           <Route exact path='/' component={LandingPage} />
-          <NavBar/>
           <Route exact path='/pokemons' component={Home} />
           <Route exact path='/create' component={PokemonForm}/>
           <Route path='/pokemons/:id' component={PokemonDetail} />
-        {/* </Switch> */}
+        </Switch>
       </Router>
     </div>
   );

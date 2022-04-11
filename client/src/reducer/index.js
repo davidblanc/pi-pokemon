@@ -10,7 +10,7 @@ import {
 
 const initialState = {
 	pokemons: [],
-	pokemonsBackup: [],
+	// pokemonsBackup: [],
 	pokemonDetail: {},
 	types: []
 };
@@ -21,7 +21,7 @@ function pokeReducer(state = initialState, action) {
 			return {
 				...state,
 				pokemons: action.payload,
-				pokemonsBackup: action.payload
+				// pokemonsBackup: action.payload
 			};
 		
 		case GET_POKEMON_BY_ID:

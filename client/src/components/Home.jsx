@@ -9,8 +9,9 @@ import PokemonCard from './PokemonCard';
 import SearchBar from './SearchBar';
 import Paginas from './Paginas'
 import FilterControls from './FilterControls';
+import NavBar from './NavBar'
 
-const cantPerPag = 4; // 12
+const cantPerPag = 12; // 12
 
 
 export default function Home() {
@@ -52,28 +53,35 @@ export default function Home() {
     
     return (
         <div>
-            <SearchBar handleSearchPoke={handleSearchPoke} setPokeName={setPokeName}/>
-            <FilterControls handleClick={handleClickRefresh}
-                            setOrder = {setOrder}
-                            setBy = {setBy}
-                            setFilterType = {setFilterType}
-                            setExist = {setExist}
-            />
-                <Paginas cantPerPag={cantPerPag} cant={pokemons.length} setPagina={setPage} paginaActual={page}/>
-                <div  className="pokemonList">
-                {
-                    pokePaginado?.map((poke) => {
-                        return (
-                            <Link key={poke.id} to={`/pokemons/${poke.id}`}>
-                                <PokemonCard
-                                name={poke.name}
-                                img={poke.img}
-                                types={poke.types}
-                                />
-                            </Link>
-                        )
-                    })
-                }
+                <NavBar/>
+            <div className='homePoke'>
+                <div className="controlsSearchFilter">
+                    <SearchBar handleSearchPoke={handleSearchPoke} setPokeName={setPokeName}/>
+                    <FilterControls handleClick={handleClickRefresh}
+                                    setOrder = {setOrder}
+                                    setBy = {setBy}
+                                    setFilterType = {setFilterType}
+                                    setExist = {setExist}
+                    />
+                </div>
+                    <div className="pokePlace">
+                        <Paginas cantPerPag={cantPerPag} cant={pokemons.length} setPagina={setPage} paginaActual={page}/>
+                        <div  className="pokemonList">
+                        {
+                            pokePaginado?.map((poke) => {
+                                return (
+                                    <Link key={poke.id} to={`/pokemons/${poke.id}`}>
+                                        <PokemonCard
+                                        name={poke.name}
+                                        img={poke.img}
+                                        types={poke.types}
+                                        />
+                                    </Link>
+                                )
+                            })
+                        }
+                        </div>
+                    </div>
             </div>
         </div>
 

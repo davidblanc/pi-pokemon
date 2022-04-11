@@ -36,11 +36,17 @@ export function getTypes() {
 
 export function getPokemonById(payload) {
 	return async function(dispatch) {
-		let pokes = await axios.get(_serverUrl + '/pokemons/' + payload);
-		return dispatch({
-			type: GET_POKEMON_BY_ID,
-			payload: pokes.data
-		});
+		try {
+			let pokes = await axios.get(_serverUrl + '/pokemons/' + payload);
+			return dispatch({
+				type: GET_POKEMON_BY_ID,
+				payload: pokes.data
+			});
+		} catch (err) {
+			alert('Pokemon no existe');
+			// window.location.replace('http://localhost:3000/error-404')
+
+		}
 	};
 }
 export function getPokemonByName(payload) {

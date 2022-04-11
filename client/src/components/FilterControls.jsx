@@ -10,6 +10,7 @@ export default function FilterControls({ handleClick, setOrder, setBy, setFilter
 
 	useEffect(() => {
 		!types.length && dispatch(getTypes());
+		// eslint-disable-next-line
 	},[]);
 
 	return (
