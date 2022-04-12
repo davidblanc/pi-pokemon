@@ -15,6 +15,7 @@ export default function FilterControls({ handleClick, setOrder, setBy, setFilter
 
 	return (
 		<div className="pokeSelects">
+			<h2>Filtrar/Ordenar</h2>
 			<select onChange={e => setExist(e.target.value)} name="createdOrApi" id="">
 				<option value="">Creados y Existentes</option>
 				<option value="false">Existente</option>

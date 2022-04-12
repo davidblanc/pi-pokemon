@@ -11,6 +11,7 @@ export default function Paginas({ cantPerPag, cant, setPagina, paginaActual }) {
 				{numbers.map((number) => {
 					return (
 						<button
+							className='buttonPage'
 							disabled={number === paginaActual}
 							key={number}
 							onClick={() => {

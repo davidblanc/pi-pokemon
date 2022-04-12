@@ -2,7 +2,6 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { configure, shallow } from "enzyme";
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
-// import isReact from "is-react";
 
 import Nav from "./components/NavBar";
 
@@ -12,7 +11,7 @@ describe("<NavBar />", () => {
   let nav;
   beforeEach(() => {
     nav = shallow(<Nav />);
-    // expect(isReact.classComponent(Nav)).toBeTruthy();
+
   });
 
   it('Debería renderizar dos <NavLink to="" />. El primero que vaya a "/pokemons", y el segundo a "/create"', () => {
@@ -27,7 +26,7 @@ describe("<NavBar />", () => {
   });
 
   it('Debería tener un segundo Link, con texto "Crear Pokemon" y que cambie la ruta hacia "/create"', () => {
-    expect(nav.find(NavLink).at(1).prop("to")).toEqual("/create");
+    expect(nav.find(NavLink).at(1).prop("to")).toEqual("/pokemons/create");
     expect(nav.find(NavLink).at(1).text()).toEqual("Crear Pokemon");
   });
 });

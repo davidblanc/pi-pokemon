@@ -1,8 +1,54 @@
-body {
-    background-image: url('https://images2.alphacoders.com/119/119492.jpg');
-    background-attachment: fixed;
-    background-position: right bottom;
+.backLanding {
+    height: 100vh;
+    background-image: url('../../images/pokemon_wallpaper.jpg');
+    background-repeat: no-repeat;
     background-size: cover;
+    align-items: center;
+    position: relative;
+}
+
+.over {
+
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(170, 169, 169, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
+.imagePoke {
+    width:100px;
+    margin: 0 auto;
+    transition: 1.5s ease;
+    -moz-transition: 1.5s ease;
+    /* Firefox */
+    -webkit-transition: 1.5s ease;
+    /* Chrome - Safari */
+    -o-transition: 1.5s ease;
+    /* Opera */
+}
+.imagePoke img {
+    width: 100px;
+}
+.imagePoke:target {
+    transform : scale(100);
+		-moz-transform : scale(100); /* Firefox */
+		-webkit-transform : scale(100); /* Chrome - Safari */
+		-o-transform : scale(100); /* Opera */
+		-ms-transform : scale(100); /* IE9 */
+}
+.imagePoke:hover {
+    transform : scale(10);
+		-moz-transform : scale(10); /* Firefox */
+		-webkit-transform : scale(10); /* Chrome - Safari */
+		-o-transform : scale(10); /* Opera */
+		-ms-transform : scale(10); /* IE9 */
 }
 
 h1 {
@@ -11,7 +57,7 @@ h1 {
 }
 
 .button {
-    margin-top:10px;
+    margin-top: 10px;
     border-top: 1px solid #000000;
     background: #d41908;
     background: -webkit-gradient(linear, left top, left bottom, from(#000000), to(#d41908));
@@ -43,3 +89,4 @@ h1 {
     border-top-color: #ffffff;
     background: #ffffff;
 }
+

@@ -3,12 +3,11 @@
 
 // test('renders learn react link', () => {
 //   render(<App />);
-//   const linkElement = screen.getByText(/Home/i);
+//   const linkElement = screen.getByText(/learn react/i);
 //   expect(linkElement).toBeInTheDocument();
 // });
-import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
-import App from './App';
+
+
 import React from "react";
 import { MemoryRouter } from "react-router-dom";
 import { Provider } from "react-redux";
@@ -18,17 +17,17 @@ import { configure, mount } from "enzyme";
 import Adapter from "@wojtekmaj/enzyme-adapter-react-17";
 
 import * as data from "./dato.test.json";
-import LandingPage from "../src/components/LandingPage";
-import Home from "../src/components/Home";
-import PokemonForm from "../src/components/PokemonForm";
-import PokemonDetail from "../src/components/PokemonDetail";
-
+import App from "../App";
+import Nav from "../components/Nav/Nav";
+import Houses from "../components/Houses/Houses";
+import HouseDetail from "../components/HouseDetail/HouseDetail";
+import CreateHouse from "../components/CreateHouse/CreateHouse";
 
 configure({ adapter: new Adapter() });
 
 describe("<App />", () => {
   let store;
-  const routes = ["/", "/otraRuta", "/houses", "/houses/:1", "/house/create"];
+  const routes = ["/", "/pokemons", "/create", "/pokemons/:1"];
   const mockStore = configureStore([thunk]);
   const state = {
     houses: data.houses,
@@ -49,12 +48,22 @@ describe("<App />", () => {
     );
   };
 
+  describe("El componente Nav debe ser renderizado en todas las rutas", () => {
+    it('Debería ser renderizado en la ruta "/"', () => {
+      const app = mount(componentToUse(routes[0]));
+      expect(app.find(Nav)).toHaveLength(1);
+    });
 
+    it('Debería ser renderizado en la ruta "/otraRuta"', () => {
+      const app = mount(componentToUse(routes[1]));
+      expect(app.find(Nav)).toHaveLength(1);
+    });
+  });
 
-  it('El componente "Landing" se debería renderizar solamente en la ruta "/"', () => {
+  it('El componente "Houses" se debería renderizar solamente en la ruta "/"', () => {
     const app = mount(componentToUse(routes[0]));
-    expect(app.find(LandingPage)).toHaveLength(1);
-
+    expect(app.find(Houses)).toHaveLength(1);
+    expect(app.find(Nav)).toHaveLength(1);
   });
 
   it('El componente "HouseDetail" se debería renderizar solamente en la ruta "/houses/:houseId"', () => {

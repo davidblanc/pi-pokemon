@@ -21,7 +21,7 @@ export default function Home() {
     const [filterType,setFilterType] = useState('') 
     const [exist,setExist] = useState('')
 
-    const [pokeName,setPokeName] = useState('');
+    // const [pokeName,setPokeName] = useState('');
     // Redux
     const dispatch = useDispatch();
     const pokemons = useSelector(state => state.pokemons
@@ -35,28 +35,34 @@ export default function Home() {
     
     const [page, setPage] = useState(1);
     const pokePaginado = pokemons.slice((page-1)*cantPerPag,page*cantPerPag);  
-    
+   
 
     useEffect(() => {
         dispatch(getPokemons());  
     }, [dispatch]);
     
+    useEffect(() => {
+        setPage(1);
+    }, [filterType,exist]);
+    
+
     const handleClickRefresh = (e) => {
         e.preventDefault();
         dispatch(getPokemons());
     }
     
-    const handleSearchPoke = (e) => {
-        e.preventDefault();
-        dispatch(getPokemonByName(pokeName))
+    const handleSearchPoke = (pokeName) => {
+        dispatch(getPokemonByName(pokeName));
+        setPage(1);
+  
     }    
-    
+    // setPokeName={setPokeName}
+   
     return (
         <div>
-                <NavBar/>
             <div className='homePoke'>
                 <div className="controlsSearchFilter">
-                    <SearchBar handleSearchPoke={handleSearchPoke} setPokeName={setPokeName}/>
+                    <SearchBar handleSearchPoke={handleSearchPoke} /> 
                     <FilterControls handleClick={handleClickRefresh}
                                     setOrder = {setOrder}
                                     setBy = {setBy}

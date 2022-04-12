@@ -3,7 +3,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTypes, postPokemon } from '../actions';
-import NavBar from './NavBar';
+
 
 //regex
 const imgUrlCheck = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/;
@@ -19,12 +19,12 @@ export default function PokemonForm() {
 	const [ inputs, setInputs ] = useState({
 		name: '',
 		img: '',
-		hp: 0,
-		attack: 0,
-		defense: 0,
-		speed: 0,
-		height: 0,
-		weight: 0,
+		hp: 1,
+		attack: 1,
+		defense: 1,
+		speed: 1,
+		height: 1,
+		weight: 1,
 		type1: 'normal',
 		type2: ''
 	});
@@ -65,8 +65,6 @@ export default function PokemonForm() {
 	
 	};
 
-	
-
 	const handlerOnSubmit = (e) => {
 		e.preventDefault();
 		dispatch(
@@ -80,12 +78,12 @@ export default function PokemonForm() {
 		setInputs({
 			name: '',
 			img: '',
-			hp: 0,
-			attack: 0,
-			defense: 0,
-			speed: 0,
-			height: 0,
-			weight: 0,
+			hp: 1,
+			attack: 1,
+			defense: 1,
+			speed: 1,
+			height: 1,
+			weight: 1,
 			type1: 'normal',
 			type2: ''
 		})
@@ -94,9 +92,8 @@ export default function PokemonForm() {
 	return (
 
 		<div>
-			<NavBar/>
 			<form className="formPoke" onSubmit={(e) => handlerOnSubmit(e)}>
-				<h1>Crear Pokemon Nuevo</h1>
+				<h2>Crear Pokemon Nuevo</h2>
 					<div className="nameForm">
 						<input
 							// className={error && 'danger'}
@@ -105,7 +102,8 @@ export default function PokemonForm() {
 							placeholder="Nombre del pokemon"
 							onChange={(e) => onChanges(e)}
 							required
-						/>
+						/> 
+						<br />
 						{!error.name ? null : <span>{error.name}</span>}
 					</div>
 					<div className="imgForm">
@@ -117,6 +115,7 @@ export default function PokemonForm() {
 							value={inputs.img}
 							placeholder="Ingrese URL de la imagen..."
 						/>
+						<br />
 						{!error.img ? null : <span>{error.img}</span>}
 					</div>
 				{/* stats */}
@@ -128,8 +127,8 @@ export default function PokemonForm() {
 								type="range"
 								name={name}
 								value={value}
-								min="0"
-								max="100"
+								min="1"
+								max="2100"
 								onChange={(e) => onChanges(e)}
 							/>
 							<span>{value}</span>
@@ -139,7 +138,8 @@ export default function PokemonForm() {
 				{/* types */}
 					<div className="typesForm">
 						<div>
-							<select onChange={(e) => onChanges(e)} name="type1" id="">
+							<br />
+							<select onChange={(e) => onChanges(e)} name="type1" id="" value={inputs.type1}>
 								{types.map((type, i) => {
 									return (
 										<option key={i} name="type1" id="" value={type.name}>
@@ -148,7 +148,8 @@ export default function PokemonForm() {
 									);
 								})}
 							</select>
-							<select onChange={(e) => onChanges(e)} name="type2" id="">
+				
+							<select onChange={(e) => onChanges(e)} name="type2" id="" value={inputs.type2}>
 								<option value="">agregar un tipo </option>
 								{types.map((type, i) => {
 									return (
@@ -160,6 +161,7 @@ export default function PokemonForm() {
 							</select>
 						</div>
 						<div>{!error.types ? null : <span>{error.types}</span>}</div>
+						<br />
 					</div>
 			
 				{/* <label htmlFor="hp">
@@ -228,10 +230,10 @@ export default function PokemonForm() {
 						onChange={(e) => onChanges(e)}
 					/>
 				</label> */}
-				<input
+				<button
 					disabled={error.name || error.types || error.img ? true : undefined}
 					type="submit"
-				/>
+				>Enviar</button>
 			</form>
 		</div>
 	);

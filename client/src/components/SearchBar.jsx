@@ -1,16 +1,27 @@
 import './styles.css';
 import React from 'react';
+import { useState, useEffect } from 'react';
 
+export default function SearchBar({ handleSearchPoke }) {
+	const [ pokeName, setPokeName ] = useState('');
 
-export default function SearchBar( {handleSearchPoke, setPokeName}) {
+   
 
+    const handlerOnSubmit = (e) => {
+        e.preventDefault();
+        handleSearchPoke(pokeName);
+        setPokeName('');
+    }
 
-
-    return (
-        <form> 
-            <label htmlFor="search">Ingresa el nombre de Pokemon</label>
-            <input onChange={e => setPokeName(e.target.value)} name="search" type="text" className="text" />
-            <button type='submit' onClick={e => handleSearchPoke(e)}>Buscar</button>
-        </form>
-    )
+	return (
+		<form className="searchBarStyle"
+			onSubmit={(e) => {
+				handlerOnSubmit(e);
+			}}
+		>
+			<label htmlFor="search">Buscar por nombre</label>
+			<input required onChange={(e) => setPokeName(e.target.value)} name="search" type="text" className="text" value={pokeName}/>
+			<button type="submit">Buscar</button>
+		</form>
+	);
 }
