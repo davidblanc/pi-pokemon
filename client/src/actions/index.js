@@ -7,7 +7,8 @@ export const GET_POKEMONS = 'GET_POKEMONS',
 	GET_POKEMON_BY_ID = 'GET_POKEMON_BY_ID',
 	GET_TYPES = 'GET_TYPES',
 	POST_POKEMON = 'POST_POKEMON',
-	GET_POKEMON_BY_NAME = 'GET_POKEMON_BY_NAME';
+	GET_POKEMON_BY_NAME = 'GET_POKEMON_BY_NAME',
+	ERROR= 'ERROR';
 
 export function getPokemons() {
 	console.log('Entro a getPokemons function');
@@ -58,7 +59,11 @@ export function getPokemonByName(payload) {
 				payload: pokes.data
 			});
 		} catch (err) {
-			alert(`No existe un pokemon de nombre ${payload}`);
+			// alert(`No existe un pokemon de nombre ${payload}`);
+			return dispatch({
+				type: ERROR,
+				payload: `No existe un pokemon de nombre ${payload}`
+			});
 		}
 	};
 }

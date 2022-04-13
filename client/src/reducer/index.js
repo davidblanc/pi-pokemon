@@ -5,14 +5,16 @@ import {
 	GET_POKEMON_BY_ID,
 	GET_TYPES,
 	POST_POKEMON,
-	GET_POKEMON_BY_NAME
+	GET_POKEMON_BY_NAME,
+	ERROR
 } from '../actions';
 
 const initialState = {
 	pokemons: [],
 	// pokemonsBackup: [],
 	pokemonDetail: {},
-	types: []
+	types: [],
+	error: ''
 };
 
 function pokeReducer(state = initialState, action) {
@@ -20,10 +22,10 @@ function pokeReducer(state = initialState, action) {
 		case GET_POKEMONS:
 			return {
 				...state,
-				pokemons: action.payload,
+				pokemons: action.payload
 				// pokemonsBackup: action.payload
 			};
-		
+
 		case GET_POKEMON_BY_ID:
 			return {
 				...state,
@@ -32,7 +34,7 @@ function pokeReducer(state = initialState, action) {
 		case GET_POKEMON_BY_NAME:
 			return {
 				...state,
-				pokemons: [action.payload]
+				pokemons: [ action.payload ]
 			};
 		case GET_TYPES:
 			return {
@@ -43,13 +45,17 @@ function pokeReducer(state = initialState, action) {
 			return {
 				...state
 			};
+		case ERROR:
+			return {
+				...state,
+				error: action.payload
+			};
 		default:
 			return state;
 	}
 }
 
 export default pokeReducer;
-
 
 // case FILTER_BY_CREATED:
 // 			return {

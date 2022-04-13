@@ -2,7 +2,7 @@ import './styles.css';
 import React from 'react';
 import { useState, useEffect } from 'react';
 
-export default function SearchBar({ handleSearchPoke }) {
+export default function SearchBar({ handleSearchPoke,error}) {
 	const [ pokeName, setPokeName ] = useState('');
 
    
@@ -21,6 +21,7 @@ export default function SearchBar({ handleSearchPoke }) {
 		>
 			<label htmlFor="search">Buscar por nombre</label>
 			<input required onChange={(e) => setPokeName(e.target.value)} name="search" type="text" className="text" value={pokeName}/>
+			<div>{error}</div>
 			<button type="submit">Buscar</button>
 		</form>
 	);

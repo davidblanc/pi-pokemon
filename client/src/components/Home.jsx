@@ -11,7 +11,7 @@ import Paginas from './Paginas'
 import FilterControls from './FilterControls';
 import NavBar from './NavBar'
 
-const cantPerPag = 12; // 12
+const cantPerPag = 3; // 12
 
 
 export default function Home() {
@@ -24,6 +24,7 @@ export default function Home() {
     // const [pokeName,setPokeName] = useState('');
     // Redux
     const dispatch = useDispatch();
+    const errorD = useSelector(state => state.error )
     const pokemons = useSelector(state => state.pokemons
         .filter( (poke) => 
             exist === '' ? true : poke.createdInDb.toString() === exist        
@@ -62,7 +63,7 @@ export default function Home() {
         <div>
             <div className='homePoke'>
                 <div className="controlsSearchFilter">
-                    <SearchBar handleSearchPoke={handleSearchPoke} /> 
+                    <SearchBar handleSearchPoke={handleSearchPoke} error={errorD}/> 
                     <FilterControls handleClick={handleClickRefresh}
                                     setOrder = {setOrder}
                                     setBy = {setBy}
