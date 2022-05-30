@@ -1,5 +1,9 @@
 import axios from 'axios';
-const _serverUrl = 'http://localhost:3001';
+import dotenv from 'dotenv';
+dotenv.config();
+const _serverUrl = process.env.REACT_APP_API ;
+console.log(process.env.REACT_APP_API,'react-app');
+console.log( _serverUrl,'URL API');
 
 export const GET_POKEMONS = 'GET_POKEMONS',
 	FILTER_BY_CREATED = 'FILTER_BY_CREATED',
